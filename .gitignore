@@ -1,0 +1,17 @@
+# Local credentials and runtime state
+.env
+.env.*
+.mcp.json
+.rivet/
+.claude/
+
+# Course and private material
+课件/
+课件_text/
+*.pdf
+*.docx
+
+# Local OS/editor files
+.DS_Store
+.vscode/
+.idea/

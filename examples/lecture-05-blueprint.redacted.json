@@ -1,0 +1,73 @@
+{
+  "name": "Example webhook triage workflow",
+  "flow": [
+    {
+      "id": 1,
+      "module": "gateway:CustomWebHook",
+      "version": 1,
+      "parameters": {
+        "hook": "<YOUR_WEBHOOK_ID>"
+      },
+      "mapper": {}
+    },
+    {
+      "id": 2,
+      "module": "builtin:BasicRouter",
+      "version": 1,
+      "routes": [
+        {
+          "flow": [
+            {
+              "id": 3,
+              "module": "gateway:WebhookRespond",
+              "version": 1,
+              "parameters": {},
+              "mapper": {
+                "status": "400",
+                "body": "{\"error\":\"invalid input\"}",
+                "headers": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ]
+              },
+              "filter": {
+                "name": "Invalid length",
+                "conditions": [
+                  [
+                    {
+                      "a": "{{length(1.message)}}",
+                      "o": "number:lessorequal",
+                      "b": "1"
+                    }
+                  ]
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "flow": [
+            {
+              "id": 4,
+              "module": "ai-tools:Ask",
+              "version": 2,
+              "parameters": {
+                "makeConnectionId": "<YOUR_CONNECTION_ID>",
+                "model": "medium"
+              },
+              "mapper": {
+                "input": "Return only a valid JSON object for the supplied message.\n\nMessage:\n{{1.message}}"
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "metadata": {
+    "instant": true,
+    "version": 1
+  }
+}
